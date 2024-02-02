@@ -21,12 +21,42 @@ classdef set_1
 
         end 
         
-        function[a_n] = fibonacci_rec(N)
+        function[N] = fib_rec(N)
+           if (N < 2)
+               N = 1;
+            else 
            
-        
+                N = fibonacci_rec(N-1) + fibonacci_rec(N-2);
+           end 
+       
+        end 
+
+
+        function[fiblis] = fib_list(N)
+            fiblis(1) = 1;
+            fiblis(2) = 1;
+            for n=1:N
+              fiblis(n + 2) = fiblis(n + 1) + fiblis(n);
+
+            end
+            
+       
 
         end 
 
 
+
+
+
+        function[sig] = ratio(N)
+            seq = (fib_list(N));
+            sig = 0;
+            for n=1:N
+                sig = sig + ( (-1)^(n+1) ) / (seq(n) * seq(n+1));
+            end 
+
+
+
+        end 
     end 
 end 
