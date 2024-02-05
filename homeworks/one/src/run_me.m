@@ -23,7 +23,8 @@ for i=1:N
 end 
 figure(1)
 plot(1:N,list);
-
+ylabel('value')
+xlabel('N Terms')
 [~, N_list] = set_1.fib_list(N);
 
 assignin('base','Taylor',tay);
