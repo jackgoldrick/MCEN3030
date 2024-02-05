@@ -12,16 +12,19 @@ toc
 
 tic
 rec_val = set_1.fib_rec(N);
+toc
 
-
-[j, N_list] = set_1.fib_list(N);
-
+tic
+[j, ~] = set_1.fib_list(N);
+toc
 
 for i=1:N
     list(i) = set_1.ratio(i);
 end 
 figure(1)
 plot(1:N,list);
+
+[~, N_list] = set_1.fib_list(N);
 
 assignin('base','Taylor',tay);
 assignin('base','Taylor_Error',error);
