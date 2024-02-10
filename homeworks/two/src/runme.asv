@@ -1,0 +1,50 @@
+function runme(x_0, x_l, x_u, err_acc, a, N, Ceig, C)
+    import pkg.set_2.*
+
+    printf('Problem 1: \n')
+    printf('  -> NR Method: \n');
+    printf('    -> ');
+        tic
+
+            NR_method(a, x_0, err_acc)
+
+        toc 
+
+    printf('Problem 2: \n')
+    printf('  -> Conduction Eigenvalue: \n');
+    printf('    -> ');
+
+        tic
+
+            con_eig(Ceig, N)
+
+        toc
+
+    printf('Problem 3: \n')
+    printf('  a) Bisection: \n');
+    printf('    -> ');
+    
+        tic
+
+    
+            p3_bisect(x_l, x_u, err_acc)
+
+
+        toc
+
+    
+    printf('  b) False Position: \n');
+    printf('    -> ');
+        tic
+
+        p3_bisect(x_l, x_u, err_acc)
+        
+        toc
+
+  
+
+
+
+
+
+end 
