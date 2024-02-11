@@ -25,31 +25,38 @@ classdef set_2
                 y = fxn_prime(x_0);
             end 
 
-            % sol
+       
         end
 
 
 
         %% Problem 2: Eigenvalue Bisection
         function [B]= con_eig(C,N)
-            % inputs: C
-            % N
-            % output: B
             
+            % My Uncle told me the usefulness of this method relies in
+            % manipulating the equation to equal zero -V- values. Low key
+            % kind of elegant
             function y = fxn(b)
                 
                 y = 1 - b * cot(b) - C;
             end 
-            % this 
+
+            % 1 decimal more percise than the Universal gas constant's sig
+            % figs according to google becuase fluids and gasses.
             err_acceptable= 1e-9;
             x_M = 0;
+
             x_L=0.00001:pi:N*pi;     
             x_U=pi-0.00001:pi:N*pi;
+
             B=zeros(1,N); % and initialize space for B
            
 
             for n=1:N
                 error = 100;
+                % since code/alg is adjusted to find a zero for all given value
+                % combinations, my error will approach zero the more percise it
+                % becomes, thus normalization is needed.
                 while ( error > err_acceptable)
                     x_M = (x_L(n) + x_U(n)) / 2;
 
@@ -64,7 +71,6 @@ classdef set_2
 
                     end 
                     
-
                 end 
             
                 B(n) = x_M;
@@ -92,7 +98,9 @@ classdef set_2
 
 
             METH();
-
+            % since code/alg is adjusted to find a zero for all given value
+            % combinations, my error will approach zero the more percise it
+            % becomes, thus normalization is needed.
             while ( error > err_accept)
                 x_old = x_M;
                 if (fxn(x_M) * fxn(x_l) < 0)
@@ -116,24 +124,30 @@ classdef set_2
         function [B]= p3_false_pos(x_l, x_u, C, err_accept)
             error = 100;
             x_M = 0;
-
+            
+            % 
             x = [x_u x_l];
             f = [fxn(x_l) -fxn(x_u)]';
   
             function y = fxn(b)
-                
+            
                 y = exp(b) * log(b) - C;
             end 
 
+             % yes i did decide to do it this way and name the function
+             % meth
              function METH()
-                
+               % anyone else see that this is defined as definition for
+               % cosine. its an inner producted nomalized with a length -
+               % kinda 
                x_M = (x*f) / (f(1) + f(2));
             end
 
-
+            % Meth is so helpful here
             METH();
 
             while ( error > err_accept)
+
                 x_old = x_M;
               
                         
@@ -148,7 +162,9 @@ classdef set_2
               
                     
                 end
-
+                % the normal usage of meth does usually lead to an error
+                % but this definiton of meth helps create a different kid
+                % of error, surprisingly one that is useful
                 METH();
                 error = abs(x_old - x_M) / x_M;
 

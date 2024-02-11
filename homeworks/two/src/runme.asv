@@ -1,43 +1,48 @@
-function runme(x_0, x_l, x_u, err_acc, a, N, Ceig, C)
+% runme(10, 6, 5, 3, 1, 4, 22, .00001)
+% Everything will print to Cmd-Win 
+function runme(a, x_0, Ceig, N, x_l, x_u, C, err_acc)
     import pkg.set_2.*
 
-    printf('Problem 1: \n')
-    printf('  -> NR Method: \n');
-    printf('    -> ');
+    fprintf('Problem 1: \n')
+    fprintf('  -> NR Method: \n');
+    fprintf('\n')
         tic
 
-            NR_method(a, x_0, err_acc)
+            set_2.Nr_method(a, x_0, err_acc)
 
         toc 
+    fprintf('\n')
+    fprintf('Problem 2: \n')
+    fprintf('  -> Conduction Eigenvalue: \n');
+    fprintf('\n')
 
-    printf('Problem 2: \n')
-    printf('  -> Conduction Eigenvalue: \n');
-    printf('    -> ');
 
         tic
 
-            con_eig(Ceig, N)
+            set_2.con_eig(Ceig, N)
+
+        toc
+    fprintf('\n')
+    fprintf('Problem 3: \n')
+    fprintf('  a) Bisection: \n');
+    fprintf('\n')
+
+    
+        tic
+
+    
+            set_2.p3_bisect(x_l, x_u, C, err_acc)
+
 
         toc
 
-    printf('Problem 3: \n')
-    printf('  a) Bisection: \n');
-    printf('    -> ');
-    
+    fprintf('\n')
+    fprintf('  b) False Position: \n');
+    fprintf('\n')
+
         tic
 
-    
-            p3_bisect(x_l, x_u, err_acc)
-
-
-        toc
-
-    
-    printf('  b) False Position: \n');
-    printf('    -> ');
-        tic
-
-        p3_bisect(x_l, x_u, err_acc)
+        set_2.p3_false_pos(x_l, x_u, C, err_acc)
         
         toc
 

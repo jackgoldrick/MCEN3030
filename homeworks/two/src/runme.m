@@ -1,4 +1,6 @@
-function runme(x_0, x_l, x_u, err_acc, a, N, Ceig, C)
+% runme(10, 6, 5, 3, 1, 4, 22, .00001)
+% Everything will print to Cmd-Win nice and formatted.
+function runme(a, x_0, Ceig, N, x_l, x_u, C, err_acc)
     import pkg.set_2.*
 
     fprintf('Problem 1: \n')
