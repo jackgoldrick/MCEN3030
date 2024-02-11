@@ -56,7 +56,7 @@ classdef set_2
                 error = 100;
                 % since code/alg is adjusted to find a zero for all given value
                 % combinations, my error will approach zero the more percise it
-                % becomes, thus normalization is needed.
+                % becomes, thus normalization is not needed.
                 while ( error > err_acceptable)
                     x_M = (x_L(n) + x_U(n)) / 2;
 
@@ -80,14 +80,15 @@ classdef set_2
         end 
 
         %% Problem 3: Bisection
-        function [B]= p3_bisect(x_l, x_u, C,  err_accept)
+        function [B, it]= p3_bisect(x_l, x_u, C,  err_accept)
             % C = 22;
             error = 100;
             x_M = 0;
+            it = 0;
 
   
             function y = fxn(b)
-                
+                it = it + 1;
                 y = exp(b) * log(b) - C;
             end 
 
@@ -100,9 +101,10 @@ classdef set_2
             METH();
             % since code/alg is adjusted to find a zero for all given value
             % combinations, my error will approach zero the more percise it
-            % becomes, thus normalization is needed.
+            % becomes, thus normalization is not needed.
             while ( error > err_accept)
                 x_old = x_M;
+
                 if (fxn(x_M) * fxn(x_l) < 0)
                     x_u = x_M;
                     
@@ -121,16 +123,17 @@ classdef set_2
                 B= x_M;
         end
         %% Problem 3: False Posistion 
-        function [B]= p3_false_pos(x_l, x_u, C, err_accept)
+        function [B, it]= p3_false_pos(x_l, x_u, C, err_accept)
             error = 100;
             x_M = 0;
+            it = 0;
             
             % 
             x = [x_u x_l];
             f = [fxn(x_l) -fxn(x_u)]';
   
             function y = fxn(b)
-            
+                it = it + 1;
                 y = exp(b) * log(b) - C;
             end 
 
@@ -139,7 +142,7 @@ classdef set_2
              function METH()
                % anyone else see that this is defined as definition for
                % cosine. its an inner producted nomalized with a length -
-               % kinda 
+               % i think 
                x_M = (x*f) / (f(1) + f(2));
             end
 
@@ -163,7 +166,7 @@ classdef set_2
                     
                 end
                 % the normal usage of meth does usually lead to an error
-                % but this definiton of meth helps create a different kid
+                % but this definiton of meth helps create a different kind
                 % of error, surprisingly one that is useful
                 METH();
                 error = abs(x_old - x_M) / x_M;

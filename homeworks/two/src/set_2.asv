@@ -54,6 +54,9 @@ classdef set_2
 
             for n=1:N
                 error = 100;
+                % since code/alg is adjusted to find a zero for all given value
+                % combinations, my error will approach zero the more percise it
+                % becomes, thus normalization is not needed.
                 while ( error > err_acceptable)
                     x_M = (x_L(n) + x_U(n)) / 2;
 
@@ -95,7 +98,9 @@ classdef set_2
 
 
             METH();
-            % since code
+            % since code/alg is adjusted to find a zero for all given value
+            % combinations, my error will approach zero the more percise it
+            % becomes, thus normalization is not needed.
             while ( error > err_accept)
                 x_old = x_M;
                 if (fxn(x_M) * fxn(x_l) < 0)
@@ -134,7 +139,7 @@ classdef set_2
              function METH()
                % anyone else see that this is defined as definition for
                % cosine. its an inner producted nomalized with a length -
-               % kinda 
+               % i think 
                x_M = (x*f) / (f(1) + f(2));
             end
 

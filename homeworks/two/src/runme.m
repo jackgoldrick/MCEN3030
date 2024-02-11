@@ -26,15 +26,21 @@ function runme(a, x_0, Ceig, N, x_l, x_u, C, err_acc)
     fprintf('Problem 3: \n')
     fprintf('  a) Bisection: \n');
     fprintf('\n')
-
-    
+   
         tic
 
     
-            set_2.p3_bisect(x_l, x_u, C, err_acc)
+            [B1, it1] = set_2.p3_bisect(x_l, x_u, C, err_acc);
 
 
         toc
+    fprintf('      -> Answer: ')
+    fprintf("%f" , B1);
+    fprintf('\n')
+    fprintf('      -> Number of Function Calls: ')
+    fprintf("%u" , it1);
+    fprintf('\n')
+    
 
     fprintf('\n')
     fprintf('  b) False Position: \n');
@@ -42,10 +48,15 @@ function runme(a, x_0, Ceig, N, x_l, x_u, C, err_acc)
 
         tic
 
-        set_2.p3_false_pos(x_l, x_u, C, err_acc)
+        [B2, it2] = set_2.p3_false_pos(x_l, x_u, C, err_acc);
         
         toc
-
+    fprintf('      -> Answer: ')
+    fprintf("%f" , B2);
+    fprintf('\n')
+    fprintf('      -> Number of Function Calls: ')
+    fprintf("%u" , it2);
+    fprintf('\n')
   
 
 
