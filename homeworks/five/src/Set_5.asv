@@ -34,7 +34,13 @@ classdef Set_5
 
         end
 
-
+        %% Output
+            % for ideal data: 
+                % k1 = 4.17906362865596
+                % k3 = 0.00731462542535269
+            % for experimental data: 
+                % k1 = 5.021387215396081
+                % k3 = 0.005043648279854
         function [K]  = cubic_spring(x, F)
 
             x3 = x .^3;
@@ -44,7 +50,7 @@ classdef Set_5
             K = (A' * A) \ (A' * F);
         end
 
-
+        
         function spring_plot(x, ex, F, K, Ke)
 
 
@@ -66,14 +72,23 @@ classdef Set_5
             plot(ex, F, 'x', 'Color', [0.9290 0.6940 0.1250], 'LineWidth', 1);
             plot(x, Fx, '-k', 'LineWidth', 2);
             plot(ex, Fex, '-r', 'LineWidth', 2);
+
+            legend("Ideal Force", "Experimetnal Force", "Ideal Model", "Experimental Model");
             hold off
 
 
 
         end
 
-
-
+        %% Output
+            % for ideal data: 
+                % k1 = 4.17906362865596
+                % k3 = 0.00731462542535269
+                % F50 = 1.123281359601883e+03
+            % for experimental data: 
+                % k1 = 5.021387215396081
+                % k3 = 0.005043648279854
+                % F50 = 8.815253957515517e+02
         function  [k1, k3, k1e, k3e, F50, F50e] = spring_compare()
 
             file = "../data/x-x_w_error-y.csv";
@@ -101,22 +116,36 @@ classdef Set_5
 
         end
 
+
+        %% Output: 
+            % Tau = 1.097396637644277e+02
+            % nu = 7.197512145916267
         function A=bingham(x,y)
 
             Z = [ones(length(x), 1) x];
 
             A = (Z' * Z) \ (Z' * y);
-
-
-
         end
+
+
+
+        %% Input:
+            % Seed is determined from the result of the linear least squares regression
+                 % Tau = 1.097396637644277e+02
+                 % K = 7.197512145916267
+                 % n = 1
+
+        %% Output:
+                 % Tau = 1.004899149000514e+02
+                 % K = 16.730645749178155
+                 % n = 0.721791776180352
         function B = HB(x,y,T,K,n)
 
             err = 100;
 
             accept = .02;
-    
-           
+
+
             while (err > accept )
 
                 resid = y - T - K * (x .^n);
@@ -131,27 +160,27 @@ classdef Set_5
                 J = [dtau dk dn];
 
                 B = (J' * J ) \ (J' * resid);
-                
-          
-               err = (abs(B(1) / T) + abs(B(2) / K) + abs(B(3) / n));
-                  
+
+
+                err = (abs(B(1) / T) + abs(B(2) / K) + abs(B(3) / n));
+
 
                 T = T + B(1);
                 K = K + B(2);
                 n = n + B(3);
-                
-         
+
+
 
 
             end
 
 
-           B(1) = T;
-           B(2) = K;
-           B(3) = n;
-          
+            B(1) = T;
+            B(2) = K;
+            B(3) = n;
 
-  
+
+
 
 
 
@@ -159,36 +188,38 @@ classdef Set_5
 
 
 
-            function []=model_compare()
-                filerh = "../data/rheo_data.csv";
+        function []=model_compare()
+            filerh = "../data/rheo_data.csv";
 
-                [x, y] = Set_5.process_RHdata(filerh);
+            [x, y] = Set_5.process_RHdata(filerh);
 
-                F = Set_5.bingham(x, y);
+            F = Set_5.bingham(x, y);
 
-                B = Set_5.HB(xr, yr, F(1), F(2), 1);
+            B = Set_5.HB(x, y, F(1), F(2), 1);
+
+            Bp = [B(1); B(2)];
 
 
 
 
 
             lin = [ones(length(x), 1)  x];
-            nlin= [ones(length(x), 1)  x.^2];
+            nlin= [ones(length(x), 1)  x.^B(3)];
 
             linearFit = lin * F;
-            Fex = Aex * Ke;
+            nonlinearFit = nlin * Bp;
 
 
-            f1 = figure(1);
+            f2 = figure(2);
             hold on
-            title("Hook's Cubic Least Squares Regression");
-            xlabel("Displacement");
-            ylabel("Force");
+            title("Hand Sanitizer Data");
+            xlabel("Shear Rate");
+            ylabel("Shear Stress");
 
             plot(x, y, 'ob', 'LineWidth', 1);
-            plot(x, linearFit, 'x', 'Color', [0.9290 0.6940 0.1250], 'LineWidth', 1);
-            plot(x, Fx, '-k', 'LineWidth', 2);
-            plot(ex, Fex, '-r', 'LineWidth', 2);
+            plot(x, linearFit, '-', 'Color', [0.9290 0.6940 0.1250], 'LineWidth', 1);
+            plot(x, nonlinearFit, '-r', 'LineWidth', 2);
+            legend("Experimental Data", "Linear Model", "Nonlinear Model");
             hold off
 
 
@@ -198,14 +229,14 @@ classdef Set_5
 
 
 
-            end 
-
-
-
-
         end
 
 
+
+
     end
+
+
+end
 
 

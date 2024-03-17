@@ -34,7 +34,13 @@ classdef Set_5
 
         end
 
-
+        %% Output
+            % for ideal data: 
+                % k1 = 4.17906362865596
+                % k3 = 0.00731462542535269
+            % for experimental data: 
+                % k1 = 5.021387215396081
+                % k3 = 0.005043648279854
         function [K]  = cubic_spring(x, F)
 
             x3 = x .^3;
@@ -44,7 +50,7 @@ classdef Set_5
             K = (A' * A) \ (A' * F);
         end
 
-
+        
         function spring_plot(x, ex, F, K, Ke)
 
 
@@ -66,14 +72,23 @@ classdef Set_5
             plot(ex, F, 'x', 'Color', [0.9290 0.6940 0.1250], 'LineWidth', 1);
             plot(x, Fx, '-k', 'LineWidth', 2);
             plot(ex, Fex, '-r', 'LineWidth', 2);
+
+            legend("Ideal Force", "Experimetnal Force", "Ideal Model", "Experimental Model");
             hold off
 
 
 
         end
 
-
-
+        %% Output
+            % for ideal data: 
+                % k1 = 4.17906362865596
+                % k3 = 0.00731462542535269
+                % F50 = 1.123281359601883e+03
+            % for experimental data: 
+                % k1 = 5.021387215396081
+                % k3 = 0.005043648279854
+                % F50 = 8.815253957515517e+02
         function  [k1, k3, k1e, k3e, F50, F50e] = spring_compare()
 
             file = "../data/x-x_w_error-y.csv";
@@ -101,15 +116,29 @@ classdef Set_5
 
         end
 
+
+        %% Output: 
+            % Tau = 1.097396637644277e+02
+            % nu = 7.197512145916267
         function A=bingham(x,y)
 
             Z = [ones(length(x), 1) x];
 
             A = (Z' * Z) \ (Z' * y);
-
-
-
         end
+
+
+
+        %% Input:
+            % Seed is determined from the result of the linear least squares regression
+                 % Tau = 1.097396637644277e+02
+                 % K = 7.197512145916267
+                 % n = 1
+
+        %% Output:
+                 % Tau = 1.004899149000514e+02
+                 % K = 16.730645749178155
+                 % n = 0.721791776180352
         function B = HB(x,y,T,K,n)
 
             err = 100;
@@ -190,6 +219,7 @@ classdef Set_5
             plot(x, y, 'ob', 'LineWidth', 1);
             plot(x, linearFit, '-', 'Color', [0.9290 0.6940 0.1250], 'LineWidth', 1);
             plot(x, nonlinearFit, '-r', 'LineWidth', 2);
+            legend("Experimental Data", "Linear Model", "Nonlinear Model");
             hold off
 
 
