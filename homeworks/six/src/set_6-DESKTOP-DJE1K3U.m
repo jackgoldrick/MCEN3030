@@ -21,7 +21,7 @@ classdef set_6
 
             % We suspect this data will fit the model z=a*x^n. You can plot and check,
             % but comment this out before submitting.
-            % plot(x_data,z_data,'.','MarkerSize',12)
+            plot(x_data,z_data,'.','MarkerSize',12)
             A=0:da:10; % This is the search range for "a".
             N=0:dn:5; % This is the search range for "n".
 
@@ -205,7 +205,7 @@ classdef set_6
 
 
 
-                else
+                elseif f(x1, y0) < f(x2, y0)
 
                     xu = x1;
                     x1 = x2;
@@ -220,7 +220,7 @@ classdef set_6
                     y2 = y1;
                     y1 = yl + ((sqrt(5) - 1) / 2) * (yu - yl);
 
-                else
+                elseif  f(x0,y1) < f(x0, y2)
 
                     yu = y1;
                     y1 = y2;
@@ -230,7 +230,7 @@ classdef set_6
 
 
 
-
+                 n 
 
                 if f(x1,y1) > f(x2, y2)
                     err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((xu - xl) / x1)^2 + ((yu - yl) / y1)^2) ^ .5;
@@ -267,94 +267,11 @@ classdef set_6
 
         end
 
-        function [gmax,xmax,ymax]=steepness(x0,y0,err_a)
-
-            function [k_max]=gold_search(x0, y0, err_a)
-
-                x = @(k) x0 + k * gFx(x0, y0);
-                y  = @(k) y0 + k * gFy(x0,y0);
-
-                klow = [(-x0 /gFx(x0, y0)) (-y0 /gFy(x0, y0))];
-                kupp = [((3 - x0) /gFx(x0, y0)) ((3 - y0) /gFy(x0, y0))];
-                kl = min( klow);
-                ku = max(kupp);
-                err = 100;
-                dk = ((sqrt(5) - 1) / 2) * (ku - kl);
-                k1 = kl + dk;
-                k2 = ku - dk;
-
-                while (err > err_a)
-
-                    if F(x(k1), y(k1)) > F(x(k2), y(k2))
-
-                        kl = k2;
-                        k2  = k1;
-                        k1 = kl + ((sqrt(5) - 1) / 2) * (ku - kl);
-
-
-                    else
-
-                        ku = k1;
-                        k1 = k2;
-                        k2 = ku - ((sqrt(5) - 1) / 2) * (ku - kl);
-
-                    end
-
-
-                    if F(x(k1), y(k1)) > F(x(k2), y(k2))
-                        err = (1 -  ((sqrt(5) - 1) / 2)) *  ((ku - kl) / k1);
-
-                        k_max = k1;
-
-                    else
-                        err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((ku - kl) / k2));
-
-                        k_max = k2;
+        function [gmax,xmax,ymax]=steepness(x0,y0,err_a) 
 
 
 
-                    end
-
-
-                end
-
-
-            end
-
-
-
-            F = @(x,y) sqrt(x*y) * exp(- (x^2 + y));
-
-            gFx =@(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/x - 4 * x );
-
-            gFy = @(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/y - 2 );
-            
-            err_x = 1;
-            err_y = 1;
-            %  z = 0;
-            while (err_x > err_a && err_y > err_a)
-                    k = gold_search(x0, y0, err_a);
-                    fx = gFx(x0,y0);
-                    fy = gFy(x0,y0);
-                   
-
-                    err_x = abs((k* fx) / (x0 + k * fx ));
-                    err_y = abs((k* fy) / (y0 + k * fy ));
-
-                    x0 = x0 + k * fx;
-                    y0 = y0 + k * fy;
-                    
-
-              % z = z + 1      
-            
-
-            end 
-
-            gmax = F(x0, y0);
-            xmax = x0;
-            ymax = y0;
-
-        end
+        end 
 
 
     end
