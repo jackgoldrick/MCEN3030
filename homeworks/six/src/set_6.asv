@@ -28,6 +28,7 @@ classdef set_6
             [a_fit,n_fit]=meshgrid(A,N); % This converts the above A & N into two matrices. I'm not sure the best way to explain it... just print and see what these are!
             E = recalc_e(da, 10, dn, 5, 0);
 
+
             function E = recalc_e(da, a,  dn, n, v)
                 if ~v
                     A=0:da:a; % This is the search range for "a".
@@ -349,7 +350,7 @@ classdef set_6
 
             end 
 
-            gmax = F(x0, y0 + .01);
+            gmax = F(x0, y0);
             xmax = x0;
             ymax = y0;
 

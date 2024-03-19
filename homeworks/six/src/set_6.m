@@ -28,6 +28,7 @@ classdef set_6
             [a_fit,n_fit]=meshgrid(A,N); % This converts the above A & N into two matrices. I'm not sure the best way to explain it... just print and see what these are!
             E = recalc_e(da, 10, dn, 5, 0);
 
+
             function E = recalc_e(da, a,  dn, n, v)
                 if ~v
                     A=0:da:a; % This is the search range for "a".
@@ -206,6 +207,9 @@ classdef set_6
 
 
 
+
+
+
                 else
 
                     xu = x1;
@@ -243,7 +247,7 @@ classdef set_6
                     f_max = f(x1, x2);
 
 
-                else 
+                elseif f(x1, y1) < f(x2, y2)
                     err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((xu - xl) / x2)^2 + ((yu - yl) / y2)^2) ^ .5;
 
                     x_max = x2;
@@ -252,9 +256,19 @@ classdef set_6
 
                     f_max = f(x2, y2);
 
+
+
+
                 end
 
+
+
+
+
             end
+
+
+
 
         end
 
@@ -319,27 +333,27 @@ classdef set_6
             gFx =@(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/x - 4 * x );
 
             gFy = @(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/y - 2 );
-
+            
             err_x = 1;
             err_y = 1;
             %  z = 0;
             while (err_x > err_a && err_y > err_a)
-                k = gold_search(x0, y0, err_a);
-                fx = gFx(x0,y0);
-                fy = gFy(x0,y0);
+                    k = gold_search(x0, y0, err_a);
+                    fx = gFx(x0,y0);
+                    fy = gFy(x0,y0);
+                   
 
+                    err_x = abs((k* fx) / (x0 + k * fx ));
+                    err_y = abs((k* fy) / (y0 + k * fy ));
 
-                err_x = abs((k* fx) / (x0 + k * fx ));
-                err_y = abs((k* fy) / (y0 + k * fy ));
+                    x0 = x0 + k * fx;
+                    y0 = y0 + k * fy;
+                    
 
-                x0 = x0 + k * fx;
-                y0 = y0 + k * fy;
+              % z = z + 1      
+            
 
-
-                % z = z + 1
-
-
-            end
+            end 
 
             gmax = F(x0, y0);
             xmax = x0;
