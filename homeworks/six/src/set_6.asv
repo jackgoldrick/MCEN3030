@@ -63,10 +63,7 @@ classdef set_6
             % Comment this out before submitting, but you might be interested to see
             % what the plot looks like re: the sum of residuals vs parameter pairs.
             % It will also give you an idea of where the best fit is.
-            figure(1)
-            hold on
             contour(a_fit,n_fit,E,min(E):1:max(E))
-            hold off
 
             % Essentially, E is the function we are trying to minimize with respect to
             % (a,n). Now you add your pattern search code below.
@@ -164,8 +161,6 @@ classdef set_6
 
             hold off
 
-            % norm((est - z_data), 2)
-
 
 
         end
@@ -206,6 +201,9 @@ classdef set_6
 
 
 
+
+
+
                 else
 
                     xu = x1;
@@ -243,7 +241,7 @@ classdef set_6
                     f_max = f(x1, x2);
 
 
-                else 
+                elseif f(x1, y1) < f(x2, y2)
                     err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((xu - xl) / x2)^2 + ((yu - yl) / y2)^2) ^ .5;
 
                     x_max = x2;
@@ -252,9 +250,19 @@ classdef set_6
 
                     f_max = f(x2, y2);
 
+
+
+
                 end
 
+
+
+
+
             end
+
+
+
 
         end
 
@@ -319,29 +327,29 @@ classdef set_6
             gFx =@(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/x - 4 * x );
 
             gFy = @(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/y - 2 );
-
+            
             err_x = 1;
             err_y = 1;
             %  z = 0;
             while (err_x > err_a && err_y > err_a)
-                k = gold_search(x0, y0, err_a);
-                fx = gFx(x0,y0);
-                fy = gFy(x0,y0);
+                    k = gold_search(x0, y0, err_a);
+                    fx = gFx(x0,y0);
+                    fy = gFy(x0,y0);
+                   
 
+                    err_x = abs((k* fx) / (x0 + k * fx ));
+                    err_y = abs((k* fy) / (y0 + k * fy ));
 
-                err_x = abs((k* fx) / (x0 + k * fx ));
-                err_y = abs((k* fy) / (y0 + k * fy ));
+                    x0 = x0 + k * fx;
+                    y0 = y0 + k * fy;
+                    
 
-                x0 = x0 + k * fx;
-                y0 = y0 + k * fy;
+              % z = z + 1      
+            
 
+            end 
 
-                % z = z + 1
-
-
-            end
-
-            gmax = F(x0, y0);
+            gmax = F(x0, y0 + .01);
             xmax = x0;
             ymax = y0;
 
