@@ -1,0 +1,63 @@
+function [a_best,n_best] = macks_univar(a0,n0,da,dn)
+
+% finds the best fits of a model to included data using pattern search
+
+
+%f = @(x,y); 
+
+% Some data I made up:
+x_data=[0, 0.0500, 0.1000, 0.1500, 0.2000, 0.2500, 0.3000, 0.3500, 0.4000, 0.4500, 0.5000, 0.5500, 0.6000, 0.6500, 0.7000, 0.7500, 0.8000, 0.8500, 0.9000, 0.9500, 1.0000];
+z_data=[0, 0.0288, 0.1095, 0.1945, 0.3290, 0.5470, 0.6779, 0.7737, 1.2348, 1.2512, 1.5704, 1.7016, 2.0294, 2.2959, 2.6138, 3.5973, 3.3025, 3.8515, 4.4374, 4.2621, 3.8980];
+
+% We suspect this data will fit the model z=a*x^n. You can plot and check,
+% but comment this out before submitting.
+plot(x_data,z_data,'.','MarkerSize',12)
+
+%A=0:.01:10; % This is the search range for "a".
+%N=0:.01:5; % This is the search range for "n".
+
+%[a_fit,n_fit]=meshgrid(A,N); % This converts the above A & N into two matrices. I'm not sure the best way to explain it... just print and see what these are!
+
+
+
+% Comment this out before submitting, but you might be interested to see
+% what the plot looks like re: the sum of residuals vs parameter pairs.
+% It will also give you an idea of where the best fit is.
+% contour(a_fit,n_fit,E,min(E):1:max(E))
+
+% Essentially, E is the function we are trying to minimize with respect to
+% (a,n). Now you add your pattern search code below.
+
+ 
+while da > .0001 && dn > .0001
+    a_v = [a0, a0+da , a0    , a0-da , a0];
+    n_v = [n0, n0    , n0+dn , n0    , n0 - dn];
+
+    
+    E=zeros(size(a_v)); % Initialize the sum of the squares of the residuals to be zero. We are going to calculate this for every combination of (a,n).
+
+
+    for i=1:length(x_data) % Sum the residual squared at each data point.
+        x  = x_data(i);
+        xtn = x.^n_v;
+        af = a_v.*xtn;
+        E=E+(z_data(i)-af).^2;
+    end
+    %E_v = zeros(size(a_v)); %[ E([a_v(1),n_v(1)]) , E([a_v(2),n_v(2)]) , E([a_v(3),n_v(3)]) , E([a_v(4),n_v(4)]) , E([a_v(5),n_v(5)]) ]
+
+    [M, I] = min(E);
+
+    if I ~= 1
+        a0 = a_v(I);
+        n0 = n_v(I);
+    else
+        dn = dn/2;
+        da = da/2; 
+    end 
+end 
+
+a_best = a0
+n_best = n0 
+
+
+end

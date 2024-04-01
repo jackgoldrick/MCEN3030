@@ -10,6 +10,15 @@ classdef set_6
         % exists a natural number k that makes n_k =  1/k * (index # n) true
         % where k is a real number that is less than step size used to
         % construct the mesh grid
+
+        %% Problem 1:
+
+        %% Output:
+        % a_best = 4.617187500000000
+
+        % n_best = 1.517578125000000
+
+
         function [a_best,n_best] = pattern_fit(a0,n0,da,dn)
 
             % finds the best fits of a model to included data using pattern search
@@ -25,7 +34,7 @@ classdef set_6
             A=0:da:10; % This is the search range for "a".
             N=0:dn:5; % This is the search range for "n".
 
-            [a_fit,n_fit]=meshgrid(A,N); % This converts the above A & N into two matrices. I'm not sure the best way to explain it... just print and see what these are!
+            [a_fit,n_fit]=meshgrid(A,N); 
             E = recalc_e(da, 10, dn, 5, 0);
 
 
@@ -41,10 +50,8 @@ classdef set_6
                 end
 
 
-
-
-                [a_fit,n_fit]=meshgrid(A,N); % This converts the above A & N into two matrices. I'm not sure the best way to explain it... just print and see what these are!
-                E=zeros(size(a_fit)); % Initialize the sum of the squares of the residuals to be zero. We are going to calculate this for every combination of (a,n).
+                [a_fit,n_fit]=meshgrid(A,N); 
+                E=zeros(size(a_fit)); 
                 for i=1:length(x_data) % Sum the residual squared at each data point.
 
 
@@ -52,6 +59,8 @@ classdef set_6
                 end
             end
 
+            % I find the locations of the arguments modularly and then use
+            % the result to place myself in E with row and col
             i_a = find( (a_fit > a0 - da & a_fit < a0 + da));
 
             col = (i_a(1) - mod(i_a(1), length(N))) / length(N) + 1;
@@ -64,7 +73,10 @@ classdef set_6
             % Comment this out before submitting, but you might be interested to see
             % what the plot looks like re: the sum of residuals vs parameter pairs.
             % It will also give you an idea of where the best fit is.
+            figure(1)
+            hold on
             contour(a_fit,n_fit,E,min(E):1:max(E))
+            hold off
 
             % Essentially, E is the function we are trying to minimize with respect to
             % (a,n). Now you add your pattern search code below.
@@ -76,6 +88,9 @@ classdef set_6
             f_x = 0;
             f_ny = 0;
             f_y = 0;
+
+            % This is where I make sure that the search does not access
+            % anyting outside the grid
             while (resolution < 10 )
                 f_0 = E(row, col);
 
@@ -99,7 +114,6 @@ classdef set_6
                 end
 
 
-
                 if ( (col == 1) )
                     f_y = E(row, col + 1);
                     f_ny = abs(max(f)) + 1;
@@ -117,9 +131,10 @@ classdef set_6
 
                 f = [f_0 f_nx f_x f_ny f_y];
 
+
+
+                % Where the pattern search makes its decsions
                 switch min(f)
-
-
 
 
                     case f_0
@@ -130,7 +145,6 @@ classdef set_6
                         row = 2;
                         col = 2;
                         resolution = resolution + 1;
-
 
 
                     case f_x
@@ -162,12 +176,22 @@ classdef set_6
 
             hold off
 
+            % norm((est - z_data), 2)
+
 
 
         end
 
+        %% Problem 2:
+
+        %% Output:
+        % x_max = 3.219380250507070
+
+        % y_max = 1.583590903182648
+
 
         function [f_max, x_max, y_max]=univar3030(x0, y0, err_a)
+
             f =@(x,y) -3*(1-x).^2.*exp(-(x.^2) - (y+1).^2)- 5*(x/5 - 3*x.^3 - y.^5).*exp(-0.4*x.^2-y.^2) - 1/3*exp(-(x+1).^2 - y^2);
             xl = -3;
             xu = 3;
@@ -200,11 +224,6 @@ classdef set_6
                     x2  = x1;
                     x1 = xl + ((sqrt(5) - 1) / 2) * (xu - xl);
 
-
-
-
-
-
                 else
 
                     xu = x1;
@@ -233,7 +252,7 @@ classdef set_6
 
 
                 if f(x1,y1) > f(x2, y2)
-                    err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((xu - xl) / x1)^2 + ((yu - yl) / y1)^2) ^ .5;
+                    err = abs((1 -  ((sqrt(5) - 1) / 2)) * ( ((xu - xl) / x1)^2 + ((yu - yl) / y1)^2) ^ .5);
 
                     x_max = x1;
 
@@ -242,8 +261,8 @@ classdef set_6
                     f_max = f(x1, x2);
 
 
-                elseif f(x1, y1) < f(x2, y2)
-                    err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((xu - xl) / x2)^2 + ((yu - yl) / y2)^2) ^ .5;
+                else
+                    err = abs((1 -  ((sqrt(5) - 1) / 2)) * ( ((xu - xl) / x2)^2 + ((yu - yl) / y2)^2) ^ .5);
 
                     x_max = x2;
 
@@ -267,47 +286,83 @@ classdef set_6
 
         end
 
+        %% Problem 3:
+
+        %% Output:
+        % gmax = 0.236183273977815
+
+        % xmax = 0.500000007896745
+
+        % ymax = 0.500000000002345
+
+
+
         function [gmax,xmax,ymax]=steepness(x0,y0,err_a)
+            %tweaked golden Search
 
             function [k_max]=gold_search(x0, y0, err_a)
 
                 x = @(k) x0 + k * gFx(x0, y0);
                 y  = @(k) y0 + k * gFy(x0,y0);
+                Fk = @(k) F(x(k), y(k));
 
                 klow = [(-x0 /gFx(x0, y0)) (-y0 /gFy(x0, y0))];
                 kupp = [((3 - x0) /gFx(x0, y0)) ((3 - y0) /gFy(x0, y0))];
-                kl = min( klow);
-                ku = max(kupp);
-                err = 100;
+
+
+
+                [~, l] = min(abs(klow));
+                [ ~, u] = min(abs(kupp));
+
+                ku = klow(l);
+                kl = kupp(u);
+
+
+
+                if kl > ku
+
+                    kt = kl;
+                    kl = ku;
+                    ku = kt;
+
+                end
+
+                err = 100000;
                 dk = ((sqrt(5) - 1) / 2) * (ku - kl);
+
                 k1 = kl + dk;
                 k2 = ku - dk;
 
+
+                % k0 = k1;
+
                 while (err > err_a)
 
-                    if F(x(k1), y(k1)) > F(x(k2), y(k2))
+                    if Fk(k1) > Fk(k2)
 
                         kl = k2;
                         k2  = k1;
                         k1 = kl + ((sqrt(5) - 1) / 2) * (ku - kl);
-
 
                     else
 
                         ku = k1;
                         k1 = k2;
                         k2 = ku - ((sqrt(5) - 1) / 2) * (ku - kl);
-
                     end
 
 
-                    if F(x(k1), y(k1)) > F(x(k2), y(k2))
-                        err = (1 -  ((sqrt(5) - 1) / 2)) *  ((ku - kl) / k1);
+
+
+                    if Fk(k1) > Fk(k2)
+                        err = abs((1 -  ((sqrt(5) - 1) / 2)) *  ((ku - kl) / k1));
 
                         k_max = k1;
 
+
+
                     else
-                        err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((ku - kl) / k2));
+                        err = abs((1 -  ((sqrt(5) - 1) / 2)) * ( ((ku - kl) / k2)));
 
                         k_max = k2;
 
@@ -325,31 +380,27 @@ classdef set_6
 
             F = @(x,y) sqrt(x*y) * exp(- (x^2 + y));
 
-            gFx =@(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/x - 4 * x );
+            gFx =@(x,y) exp(- (x^2 + y)) * ( y - 4* (x^2) * y) / (2 * (x*y)^.5);
 
-            gFy = @(x,y) .5 * (sqrt(x*y) * exp(- (x^2 + y))) * ( 1/y - 2 );
-            
-            err_x = 1;
-            err_y = 1;
-            %  z = 0;
+            gFy = @(x,y) exp(- (x^2 + y)) * ( x - 2 * x *y) / (2 * (x*y)^.5);
+
+            err_x = 10;
+            err_y = 10;
+
+            % This is the search alg
             while (err_x > err_a && err_y > err_a)
-                    k = gold_search(x0, y0, err_a);
-                    fx = gFx(x0,y0);
-                    fy = gFy(x0,y0);
-                   
 
-                    err_x = abs((k* fx) / (x0 + k * fx ));
-                    err_y = abs((k* fy) / (y0 + k * fy ));
+                k = gold_search(x0, y0, err_a);
+                fx = gFx(x0,y0);
+                fy = gFy(x0,y0);
 
-                    x0 = x0 + k * fx;
-                    y0 = y0 + k * fy;
-                    
+                err_x = abs((k* fx) / (x0 + k * fx ));
+                err_y = abs((k* fy) / (y0 + k * fy ));
 
-              % z = z + 1      
-            
+                x0 = x0 + k * fx;
+                y0 = y0 + k * fy;
 
-            end 
-
+            end
             gmax = F(x0, y0);
             xmax = x0;
             ymax = y0;
@@ -359,8 +410,208 @@ classdef set_6
 
     end
 
-
-
-
-
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% Ignore This
+
+% % end
+% if F(x(k1), y(k0)) > F(x(k2), y(k0))
+%
+%     kl = k2;
+%     k2  = k1;
+%     k1 = kl + ((sqrt(5) - 1) / 2) * (ku - kl);
+%
+% else
+%
+%     ku = k1;
+%     k1 = k2;
+%     k2 = ku - ((sqrt(5) - 1) / 2) * (ku - kl);
+%
+% end
+%
+%
+%
+% if F(x(k0), y(k1)) > F(x(k0), y(k2))
+%
+%     kl = k2;
+%     k2 = k1;
+%     k1 = kl + ((sqrt(5) - 1) / 2) * (ku - kl);
+%
+% else
+%
+%     ku = k1;
+%     k1 = k2;
+%     k2 = ku - ((sqrt(5) - 1) / 2) * (ku - kl);
+%
+% end
+
+% function [gmax,xmax,ymax]=steepxy(x0,y0,err_a)
+%
+%     function [kx_max, ky_max]=gold_search(x0, y0, err_a)
+%
+%         x = @(k) x0 + k * gFx(x0, y0);
+%         y  = @(k) y0 + k * gFy(x0,y0);
+%         Fk = @(k) F(x(k), y(k));
+%
+%         if (gFx(x0, y0) > 0)
+%         klx = (-x0 /gFx(x0, y0));
+%         kux = ((3 - x0) /gFx(x0, y0));
+%         kly = (-y0 /gFy(x0, y0));
+%         kuy = ((3 - y0) /gFy(x0, y0));
+%
+%         else
+%         kux = (-x0 /gFx(x0, y0));
+%         klx = ((3 - x0) /gFx(x0, y0));
+%         kuy = (-y0 /gFy(x0, y0));
+%         kly = ((3 - y0) /gFy(x0, y0));
+%
+%         end
+%
+%
+%
+%         % [~, l] = min(abs(klow));
+%         % [ ~, u] = min(abs(kupp));
+%         kl = min([klx, kly]);
+%         ku = min([kux, kuy]);
+%         err = 100000;
+%         dkx = ((sqrt(5) - 1) / 2) * (kux - klx);
+%         dky = ((sqrt(5) - 1) / 2) * (kuy - kly);
+%         dk = ((sqrt(5) - 1) / 2) * (ku - kl);
+%         k1 = kl + dk;
+%         k2 = ku - dk;
+%
+%         k1x = klx + dkx;
+%         k2x = kux - dkx;
+%
+%         k1y = kly + dky;
+%         k2y = kuy - dky;
+%
+%
+%
+%         k0x = k1x;
+%         k0y = k1y;
+%
+%         while (err > err_a)
+%
+%
+%             if F(x(k1x), y(k0y)) > F(x(k2x), y(k0y))
+%
+%                 klx = k2x;
+%                 k2x  = k1x;
+%                 k1x = klx + ((sqrt(5) - 1) / 2) * (kux - klx);
+%
+%             else
+%
+%                 kux = k1x;
+%                 k1x = k2x;
+%                 k2x = kux - ((sqrt(5) - 1) / 2) * (kux - klx);
+%
+%             end
+%
+%             if F(x(k0x), y(k1y)) > F(x(k0x), y(k2y))
+%
+%                 kly = k2y;
+%                 k2y = k1y;
+%                 k1y = kly + ((sqrt(5) - 1) / 2) * (kuy - kly);
+%
+%             else
+%
+%                 kuy = k1y;
+%                 k1y = k2y;
+%                 k2y = kuy - ((sqrt(5) - 1) / 2) * (kuy - kly);
+%
+%             end
+%             %
+%             %
+%             % if F(x(k1x), y(k1y)) > F(x(k2x), y(k2y))
+%             %
+%             %     kl = min(k2y, k2x);
+%             %     k2 = min(k1x , k1y);
+%             %     k1 = kl + ((sqrt(5) - 1) / 2) * (ku - kl);
+%             %
+%             % else
+%             %
+%             %     ku = min(k1x , k1y);
+%             %     k1 = min(k2y, k2x);
+%             %     k2 = ku - ((sqrt(5) - 1) / 2) * (ku - kl);
+%             %
+%             % end
+%
+%
+%             if F(x(k1x), y(k1y)) > F(x(k2x), y(k2y))
+%                 err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((kux - klx) / k1x)^2 + ((kuy - kly) / k1y)^2) ^ .5;
+%
+%                 kx_max = k1x;
+%                 ky_max = k1y;
+%
+%
+%
+%             else
+%                 err = (1 -  ((sqrt(5) - 1) / 2)) * ( ((kux - klx) / k2x)^2 + ((kuy - kly) / k2y)^2) ^ .5;
+%
+%                 kx_max = k2x;
+%                 ky_max = k2y;
+%
+%
+%
+%             end
+%
+%
+%         end
+%
+%
+%     end
+%
+%
+%
+%     F = @(x,y) sqrt(x*y) * exp(- (x^2 + y));
+%
+%     gFx =@(x,y) exp(- (x^2 + y)) * ( y - 4* (x^2) * y) / (2 * (x*y)^.5);
+%
+%     gFy = @(x,y) exp(- (x^2 + y)) * ( x - 2 * x *y) / (2 * (x*y)^.5);
+%
+%     err_x = 1;
+%     err_y = 1;
+%     z = 0;
+%     tic
+%     while (err_x > err_a && err_y > err_a)
+%
+%
+%
+%         [kx, ky] = gold_search(x0, y0, err_a);
+%         fx = gFx(x0,y0);
+%         fy = gFy(x0,y0);
+%
+%         err_x = abs((kx* fx) / (x0 + kx * fx ));
+%         err_y = abs((ky* fy) / (y0 + ky * fy ));
+%
+%         x0 = x0 + kx * fx;
+%         y0 = y0 + ky * fy;
+%
+%
+%         z = z + 1
+%
+%
+%     end
+%     toc
+%     gmax = F(x0, y0);
+%     xmax = x0;
+%     ymax = y0;
+%
+% end
+
+
+
